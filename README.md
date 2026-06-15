@@ -299,6 +299,10 @@ This project is open-source and available for educational purposes.
 
 ---
 
-## 👤 Author
+## 👨‍💻 Author
 
-Built as a Machine Learning practice project for salary prediction using the KNN classification algorithm.
+**Lithesh**
+
+Machine Learning Enthusiast | AI Developer | Full Stack AI Developer
+
+⭐ If you found this project useful, consider giving it a star on GitHub.
