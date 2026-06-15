@@ -7,14 +7,17 @@ from sklearn.metrics import accuracy_score
 
 import matplotlib.pyplot as plt
 
-path = "D:\Day_4\Day_4\salary.csv"
+# FIX 1: Use relative path instead of hardcoded absolute path
+path = "salary.csv"
 df = pd.read_csv(path)
 
 print(df.shape)
 print(df.head())
 
 income_set = set(df['income'])
-df['income'] = df['income'].map({'<=50K':0, '>50K':1}).astype(int)
+
+# FIX 2: Strip whitespace before mapping to avoid NaN from leading/trailing spaces
+df['income'] = df['income'].str.strip().map({'<=50K': 0, '>50K': 1}).astype(int)
 print(df.head())
 
 x = df.iloc[:, :-1].values
@@ -29,48 +32,48 @@ x_stest = std.transform(x_test)
 
 error = []
 
-#calculating error for K-value between 1 to 40
+# Calculating error for K-value between 1 to 40
 for i in range(1, 40):
-    model = KNeighborsClassifier(n_neighbors = i)
+    model = KNeighborsClassifier(n_neighbors=i)
     model.fit(x_strain, y_train)
     pred = model.predict(x_stest)
-    error.append(np.mean(pred != y_test))  #Mean Error 
+    error.append(np.mean(pred != y_test))  # Mean Error
 
-plt.figure(figsize = (12, 6))
+plt.figure(figsize=(12, 6))
 plt.plot(range(1, 40), error, color='red', linestyle='dashed', marker='o',
          markerfacecolor='blue', markersize=10)
 plt.title('Error Rate K value')
-plt.xlabel('k label')
-plt.ylabel('mean error')
+plt.xlabel('K value')
+plt.ylabel('Mean Error')
 plt.show()
 
 
-#Training
-model = KNeighborsClassifier(n_neighbors = 8, metric = 'minkowski', p = 2)
+# Training
+model = KNeighborsClassifier(n_neighbors=8, metric='minkowski', p=2)
 model.fit(x_strain, y_train)
 
-#Validation
-y_pred = model.predict(x_test)
-print(np.concatenate((y_pred.reshape(len(y_pred), 1), y_test.reshape(len(y_test), 1)),1))
+# FIX 3: Use scaled test data (x_stest) instead of raw x_test for prediction
+y_pred = model.predict(x_stest)
+print(np.concatenate((y_pred.reshape(len(y_pred), 1), y_test.reshape(len(y_test), 1)), 1))
 
 
-#Evaluation
-print("Accuracy :{0}%". format(accuracy_score(y_test, y_pred)*100))
+# Evaluation
+print("Accuracy: {0}%".format(accuracy_score(y_test, y_pred) * 100))
 
 
+# Predicting
+# FIX 4: Added descriptive prompts so the user knows what to enter
+age = int(input("Enter age: "))
+edu = int(input("Enter education level (num): "))
+cg  = int(input("Enter capital gain: "))
+wh  = int(input("Enter hours per week: "))
 
-#Predicting
-age = int(input())
-edu = int(input())
-cg = int(input())
-wh = int(input())
 new_Emp = [[age, edu, cg, wh]]
 result = model.predict(std.transform(new_Emp))
 print(result)
 
-if result == 1:
-        print("Employee might get salary above 50 K")
+# FIX 5 & 6: Index result[0] for proper scalar comparison; fix "Customer" -> "Employee"
+if result[0] == 1:
+    print("Employee might get salary above 50K")
 else:
-        print("Customer might not get salary above 50k")
-
-
+    print("Employee might not get salary above 50K")
